@@ -1,49 +1,69 @@
 import random
+import pandas as pd
+from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
 
 
-class Instance:
-    def __init__(self, fLength, fWidth, fSize, fConc, fConc1, fAsym, fM3Long, fM3Trans, fAlpha, fDist,
-                 gorh):  # class is reserved word so we're using gorh (gamma or hadron)
-        self.flength = fLength
-        self.fwidth = fWidth
-        self.fSize = fSize
-        self.fConc = fConc
-        self.fConc1 = fConc1
-        self.fAsym = fAsym
-        self.fM3Long = fM3Long
-        self.fM3Trans = fM3Trans
-        self.fAlpha = fAlpha
-        self.fDist = fDist
-        self.gorh = gorh
+def split(instances):
+    x = instances.values[:, 0:9]
+    y = instances.values[:, 10]
+    x_train, x_test, y_train, y_test = train_test_split(
+        x, y, test_size=0.3, random_state=100)
+    return x, y, x_train, x_test, y_train, y_test
+
+
+def training_with_gini(x_train, x_test, y_train):
+    clf_gini = DecisionTreeClassifier(criterion="gini", random_state=100)
+    clf_gini.fit(x_train, y_train)
+    return clf_gini
+
+
+def training_with_entropy(x_train, x_test, y_train):
+    clf_entropy = DecisionTreeClassifier(criterion="entropy", random_state=100)
+    clf_entropy.fit(x_train, y_train)
+    return clf_entropy
+
+
+def prediction(X_test, clf_object):
+    y_pred = clf_object.predict(X_test)
+    print("Predicted values:")
+    print(y_pred)
+    return y_pred
+
+
+def cal_accuracy(y_test, y_pred):
+    print("Confusion Matrix: ",
+          confusion_matrix(y_test, y_pred))
+
+    print("Accuracy : ",
+          accuracy_score(y_test, y_pred) * 100)
+
+    print("Report : ",
+          classification_report(y_test, y_pred))
+
+
+def decision_tree(x_train, x_test, y_train, y_test):
+    clf_gini = training_with_gini(x_train, x_test, y_train)
+    clf_entropy = training_with_entropy(x_train, x_test, y_train)
+    y_pred_gini = prediction(x_test, clf_gini)
+    cal_accuracy(y_test, y_pred_gini)
+    y_pred_entropy = prediction(x_test, clf_entropy)
+    cal_accuracy(y_test, y_pred_entropy)
 
 
 if __name__ == "__main__":
-    instances = []
-    training_set = []
-    test_set = []
+    instances = pd.read_csv(
+        'https://archive.ics.uci.edu/ml/machine-learning-databases/magic/magic04.data',
+        sep=',', header=None)
 
-    file = open("magic04.data", "r")
-    for line in file:
-        fields = line.split(",")
-        instances.append(
-            Instance(float(fields[0]), float(fields[1]), float(fields[2]), float(fields[3]), float(fields[4]),
-                     float(fields[5]), float(fields[6]), float(fields[7]), float(fields[8]),
-                     float(fields[9]), fields[10].replace("\n", '')))
-    file.close()
-    i = 5644                                                                                # 5644 is the number of classes (g) that should be randomly removed for the two classes to be balanced
+    i = 5644  # 5644 is the number of classes (g) that should be randomly removed for the two classes to be balanced
     while i > 0:
         j = random.randint(0, 12331)
-        if instances[j].gorh == 'g':
-            del instances[j]
+        if instances.iloc[j, 10] == 'g':
+            instances = instances.drop(instances.index[j])
             i -= 1
-    i = 9363                                                                                # 70% of the data set for training
-    while i > 0:
+    x, y, x_train, x_test, y_train, y_test = split(instances)
+    decision_tree(x_train, x_test, y_train, y_test)
 
-        j = (random.randint(0, 13375)) % (len(instances))
-        training_set.append(instances.pop(j))
-        i -= 1
-    i = 4013                                                                                # 30% for testing
-    while i > 0:
-        j = (random.randint(0, 4012)) % (len(instances))
-        test_set.append(instances.pop(j))
-        i -= 1
+    # print(len(instances))
