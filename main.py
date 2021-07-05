@@ -87,6 +87,6 @@ if __name__ == "__main__":
             instances = instances.drop(instances.index[j])
             i -= 1
     x, y, x_train, x_test, y_train, y_test = split(instances)
-    # decision_tree(x_train, x_test, y_train, y_test)
+    decision_tree(x_train, x_test, y_train, y_test)
     KNN(x_train, x_test, y_train, y_test)
-    # print(len(instances))
+
