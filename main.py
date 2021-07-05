@@ -1,7 +1,13 @@
 import random
+
 import pandas as pd
+import matplotlib
+from matplotlib import pyplot as plt
+
+from sklearn import metrics
 from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
 from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 
 
@@ -52,6 +58,23 @@ def decision_tree(x_train, x_test, y_train, y_test):
     cal_accuracy(y_test, y_pred_entropy)
 
 
+def KNN(x_train, x_test, y_train, y_test):
+    k_range = range(1, 50)
+    scores = {}
+    scores_list = []
+    for k in k_range:
+        knn = KNeighborsClassifier(n_neighbors=k)
+        knn.fit(x_train, y_train)
+        y_pred = knn.predict(x_test)
+        scores[k] = metrics.accuracy_score(y_test, y_pred)
+        scores_list.append(metrics.accuracy_score(y_test, y_pred))
+
+    plt.plot(k_range, scores_list)
+    plt.xlabel("Value of K")
+    plt.ylabel("Testing Accuracy")
+    plt.show()
+
+
 if __name__ == "__main__":
     instances = pd.read_csv(
         'https://archive.ics.uci.edu/ml/machine-learning-databases/magic/magic04.data',
@@ -64,6 +87,6 @@ if __name__ == "__main__":
             instances = instances.drop(instances.index[j])
             i -= 1
     x, y, x_train, x_test, y_train, y_test = split(instances)
-    decision_tree(x_train, x_test, y_train, y_test)
-
+    # decision_tree(x_train, x_test, y_train, y_test)
+    KNN(x_train, x_test, y_train, y_test)
     # print(len(instances))
