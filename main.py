@@ -11,6 +11,16 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 
 
+def balance(instances):
+    i = 5644  # 5644 is the number of classes (g) that should be randomly removed for the two classes to be balanced
+    while i > 0:
+        j = random.randint(0, 12331)
+        if instances.iloc[j, 10] == 'g':
+            instances = instances.drop(instances.index[j])
+            i -= 1
+    return instances
+
+
 def split(instances):
     x = instances.values[:, 0:9]
     y = instances.values[:, 10]
@@ -75,17 +85,12 @@ def KNN(x_train, x_test, y_train, y_test):
     plt.show()
 
 
+
 if __name__ == "__main__":
     instances = pd.read_csv(
         'https://archive.ics.uci.edu/ml/machine-learning-databases/magic/magic04.data',
         sep=',', header=None)
-
-    i = 5644  # 5644 is the number of classes (g) that should be randomly removed for the two classes to be balanced
-    while i > 0:
-        j = random.randint(0, 12331)
-        if instances.iloc[j, 10] == 'g':
-            instances = instances.drop(instances.index[j])
-            i -= 1
+    instances = balance(instances)
     x, y, x_train, x_test, y_train, y_test = split(instances)
     decision_tree(x_train, x_test, y_train, y_test)
     KNN(x_train, x_test, y_train, y_test)
