@@ -71,7 +71,7 @@ def decision_tree(x_train, x_test, y_train, y_test):
     cal_accuracy(y_test, y_pred_entropy)
 
 
-def KNN(x_train, x_test, y_train, y_test):
+def knn(x_train, x_test, y_train, y_test):
     k_range = range(1, 50)
     scores = {}
     scores_list = []
@@ -105,5 +105,5 @@ if __name__ == "__main__":
     instances = balance(instances)
     x, y, x_train, x_test, y_train, y_test = split(instances)
     decision_tree(x_train, x_test, y_train, y_test)
-    KNN(x_train, x_test, y_train, y_test)
+    knn(x_train, x_test, y_train, y_test)
     naive_bayes(x_train, x_test, y_train, y_test)
