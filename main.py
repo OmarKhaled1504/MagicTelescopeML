@@ -1,10 +1,9 @@
 import random
 
 import pandas as pd
-import matplotlib
 from matplotlib import pyplot as plt
-
 from sklearn import metrics
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
@@ -30,13 +29,13 @@ def split(instances):
     return x, y, x_train, x_test, y_train, y_test
 
 
-def training_with_gini(x_train, x_test, y_train):
+def training_with_gini(x_train, y_train):
     clf_gini = DecisionTreeClassifier(criterion="gini", random_state=100)
     clf_gini.fit(x_train, y_train)
     return clf_gini
 
 
-def training_with_entropy(x_train, x_test, y_train):
+def training_with_entropy(x_train, y_train):
     clf_entropy = DecisionTreeClassifier(criterion="entropy", random_state=100)
     clf_entropy.fit(x_train, y_train)
     return clf_entropy
@@ -53,16 +52,16 @@ def cal_accuracy(y_test, y_pred):
     print("Confusion Matrix: ",
           confusion_matrix(y_test, y_pred))
 
-    print("Accuracy : ",
+    print("Accuracy: ",
           accuracy_score(y_test, y_pred) * 100)
 
-    print("Report : ",
+    print("Report:",
           classification_report(y_test, y_pred))
 
 
 def decision_tree(x_train, x_test, y_train, y_test):
-    clf_gini = training_with_gini(x_train, x_test, y_train)
-    clf_entropy = training_with_entropy(x_train, x_test, y_train)
+    clf_gini = training_with_gini(x_train, y_train)
+    clf_entropy = training_with_entropy(x_train, y_train)
     y_pred_gini = prediction(x_test, clf_gini)
     print("******Decision Tree: Gini******")
     cal_accuracy(y_test, y_pred_gini)
@@ -72,17 +71,17 @@ def decision_tree(x_train, x_test, y_train, y_test):
 
 
 def knn(x_train, x_test, y_train, y_test):
-    k_range = range(1, 50)
-    scores = {}
     scores_list = []
+    k_range = range(1, 50)
+    print("******KNN******")
     for k in k_range:
         knn = KNeighborsClassifier(n_neighbors=k)
         knn.fit(x_train, y_train)
         y_pred = knn.predict(x_test)
-        scores[k] = metrics.accuracy_score(y_test, y_pred)
         scores_list.append(metrics.accuracy_score(y_test, y_pred))
-    print("******KNN******")
-    cal_accuracy(y_test, y_pred)
+        print("Accuracy Report for k=", k)
+        cal_accuracy(y_test, y_pred)
+
     plt.plot(k_range, scores_list)
     plt.xlabel("Value of K")
     plt.ylabel("Testing Accuracy")
@@ -91,11 +90,27 @@ def knn(x_train, x_test, y_train, y_test):
 
 def naive_bayes(x_train, x_test, y_train, y_test):
     gnb = GaussianNB()
-    gnb.fit(x_train,y_train)
+    gnb.fit(x_train, y_train)
     y_pred = gnb.predict(x_test)
     print("******Naive Bayes******")
-    cal_accuracy(y_test,y_pred)
+    cal_accuracy(y_test, y_pred)
 
+
+def random_forests(x_train, x_test, y_train, y_test):
+    scores_list = []
+    n_range = range(1, 75)
+    print("******Random Forests******")
+    for n in n_range:
+        rfc = RandomForestClassifier(n_estimators=n)
+        rfc.fit(x_train, y_train)
+        y_pred = rfc.predict(x_test)
+        scores_list.append(metrics.accuracy_score(y_test, y_pred))
+        print("Accuracy Report for n=",n)
+        cal_accuracy(y_test, y_pred)
+    plt.plot(n_range, scores_list)
+    plt.xlabel("Value of N")
+    plt.ylabel("Testing Accuracy")
+    plt.show()
 
 
 if __name__ == "__main__":
@@ -107,3 +122,4 @@ if __name__ == "__main__":
     decision_tree(x_train, x_test, y_train, y_test)
     knn(x_train, x_test, y_train, y_test)
     naive_bayes(x_train, x_test, y_train, y_test)
+    random_forests(x_train, x_test, y_train, y_test)
