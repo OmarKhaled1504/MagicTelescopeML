@@ -3,7 +3,7 @@ import random
 import pandas as pd
 from matplotlib import pyplot as plt
 from sklearn import metrics
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
@@ -105,7 +105,24 @@ def random_forests(x_train, x_test, y_train, y_test):
         rfc.fit(x_train, y_train)
         y_pred = rfc.predict(x_test)
         scores_list.append(metrics.accuracy_score(y_test, y_pred))
-        print("Accuracy Report for n=",n)
+        print("Accuracy Report for n=", n)
+        cal_accuracy(y_test, y_pred)
+    plt.plot(n_range, scores_list)
+    plt.xlabel("Value of N")
+    plt.ylabel("Testing Accuracy")
+    plt.show()
+
+
+def adaboost(x_train, x_test, y_train, y_test):
+    scores_list = []
+    n_range = range(1, 75)
+    print("******AdaBoost******")
+    for n in n_range:
+        abc = AdaBoostClassifier(n_estimators=n)
+        abc.fit(x_train, y_train)
+        y_pred = abc.predict(x_test)
+        scores_list.append(metrics.accuracy_score(y_test, y_pred))
+        print("Accuracy Report for n=", n)
         cal_accuracy(y_test, y_pred)
     plt.plot(n_range, scores_list)
     plt.xlabel("Value of N")
@@ -123,3 +140,4 @@ if __name__ == "__main__":
     knn(x_train, x_test, y_train, y_test)
     naive_bayes(x_train, x_test, y_train, y_test)
     random_forests(x_train, x_test, y_train, y_test)
+    adaboost(x_train, x_test, y_train, y_test)
