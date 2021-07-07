@@ -7,6 +7,7 @@ from matplotlib import pyplot as plt
 from sklearn import metrics
 from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
 from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 
@@ -63,8 +64,10 @@ def decision_tree(x_train, x_test, y_train, y_test):
     clf_gini = training_with_gini(x_train, x_test, y_train)
     clf_entropy = training_with_entropy(x_train, x_test, y_train)
     y_pred_gini = prediction(x_test, clf_gini)
+    print("******Decision Tree: Gini******")
     cal_accuracy(y_test, y_pred_gini)
     y_pred_entropy = prediction(x_test, clf_entropy)
+    print("******Decision Tree: Entropy******")
     cal_accuracy(y_test, y_pred_entropy)
 
 
@@ -78,11 +81,20 @@ def KNN(x_train, x_test, y_train, y_test):
         y_pred = knn.predict(x_test)
         scores[k] = metrics.accuracy_score(y_test, y_pred)
         scores_list.append(metrics.accuracy_score(y_test, y_pred))
-
+    print("******KNN******")
+    cal_accuracy(y_test, y_pred)
     plt.plot(k_range, scores_list)
     plt.xlabel("Value of K")
     plt.ylabel("Testing Accuracy")
     plt.show()
+
+
+def naive_bayes(x_train, x_test, y_train, y_test):
+    gnb = GaussianNB()
+    gnb.fit(x_train,y_train)
+    y_pred = gnb.predict(x_test)
+    print("******Naive Bayes******")
+    cal_accuracy(y_test,y_pred)
 
 
 
@@ -94,4 +106,4 @@ if __name__ == "__main__":
     x, y, x_train, x_test, y_train, y_test = split(instances)
     decision_tree(x_train, x_test, y_train, y_test)
     KNN(x_train, x_test, y_train, y_test)
-
+    naive_bayes(x_train, x_test, y_train, y_test)
