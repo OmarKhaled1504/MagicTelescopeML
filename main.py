@@ -140,5 +140,5 @@ if __name__ == "__main__":
     instances = balance(instances)
     x, y, x_train, x_test, y_train, y_test = split(instances)
     classifications = [decision_tree, knn, naive_bayes, random_forests, adaboost]
-    for classfication in classifications:
-        classfication(x_train, x_test, y_train, y_test)
+    for classification in classifications:
+        classification(x_train, x_test, y_train, y_test)
