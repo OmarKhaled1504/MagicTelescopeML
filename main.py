@@ -34,7 +34,7 @@ def split(instances):
     y = instances.values[:, 10]
     x_train, x_test, y_train, y_test = train_test_split(
         x, y, test_size=0.3, random_state=100)
-    return x, y, x_train, x_test, y_train, y_test
+    return x_train, x_test, y_train, y_test
 
 
 def cal_accuracy(y_test, y_pred):
@@ -161,7 +161,7 @@ def naive_bayes(x_train, x_test, y_train, y_test):
 if __name__ == "__main__":
     instances = read()
     instances = balance(instances)
-    x, y, x_train, x_test, y_train, y_test = split(instances)
+    x_train, x_test, y_train, y_test = split(instances)
     classifications = [decision_tree, knn, naive_bayes, random_forests, adaboost]
     for classification in classifications:
         classification(x_train, x_test, y_train, y_test)
