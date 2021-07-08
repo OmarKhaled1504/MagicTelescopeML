@@ -10,6 +10,8 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 
+max_accuracy = []
+
 
 def read():
     return pd.read_csv(
@@ -46,13 +48,25 @@ def cal_accuracy(y_test, y_pred):
           classification_report(y_test, y_pred))
 
 
+def plot_max():
+    data = {'DT: Gini': max_accuracy[0], 'DT: Entropy': max_accuracy[1], 'KNN': max_accuracy[2],
+            'NB': max_accuracy[3], 'RF': max_accuracy[4], "AdaBoost": max_accuracy[5]}
+    plt.bar(list(data.keys()), list(data.values()), color='purple', width=0.4)
+    plt.xlabel("Algorithm Used")
+    plt.ylabel("Accuracy Score")
+    plt.title("Max Accuracy for each Algorithm Comparison")
+    plt.show()
+
+
 def decision_tree(x_train, x_test, y_train, y_test):
     clf_gini = training_with_gini(x_train, y_train)
     clf_entropy = training_with_entropy(x_train, y_train)
     y_pred_gini = clf_gini.predict(x_test)
     print("******Decision Tree: Gini******")
+    max_accuracy.append(accuracy_score(y_test, y_pred_gini) * 100)
     cal_accuracy(y_test, y_pred_gini)
     y_pred_entropy = clf_entropy.predict(x_test)
+    max_accuracy.append(accuracy_score(y_test, y_pred_entropy) * 100)
     print("******Decision Tree: Entropy******")
     cal_accuracy(y_test, y_pred_entropy)
 
@@ -80,6 +94,10 @@ def adaboost(x_train, x_test, y_train, y_test):
         scores_list.append(metrics.accuracy_score(y_test, y_pred))
         print("Accuracy Report for n=", n)
         cal_accuracy(y_test, y_pred)
+    print("Most accurate n: {}, with Accuracy {}".format(scores_list.index(max(scores_list)) - 1,
+                                                         scores_list[scores_list.index(max(scores_list))] * 100))
+    max_accuracy.append(max(scores_list) * 100)
+
     plt.plot(n_range, scores_list)
     plt.title('Adaboost with n_estimators tuned')
     plt.xlabel("Value of N")
@@ -98,6 +116,9 @@ def knn(x_train, x_test, y_train, y_test):
         scores_list.append(metrics.accuracy_score(y_test, y_pred))
         print("Accuracy Report for k=", k)
         cal_accuracy(y_test, y_pred)
+    print("Most accurate k: {}, with Accuracy {}".format(scores_list.index(max(scores_list)) - 1,
+                                                         scores_list[scores_list.index(max(scores_list))] * 100))
+    max_accuracy.append(max(scores_list) * 100)
 
     plt.plot(k_range, scores_list)
     plt.title('K-NN with K tuned')
@@ -117,6 +138,10 @@ def random_forests(x_train, x_test, y_train, y_test):
         scores_list.append(metrics.accuracy_score(y_test, y_pred))
         print("Accuracy Report for n=", n)
         cal_accuracy(y_test, y_pred)
+    print("Most accurate n: {}, with Accuracy {}".format(scores_list.index(max(scores_list)) - 1,
+                                                         scores_list[scores_list.index(max(scores_list))] * 100))
+    max_accuracy.append(max(scores_list) * 100)
+
     plt.plot(n_range, scores_list)
     plt.title('Random Forest with n_estimators tuned')
     plt.xlabel("Value of N")
@@ -130,6 +155,7 @@ def naive_bayes(x_train, x_test, y_train, y_test):
     y_pred = gnb.predict(x_test)
     print("******Naive Bayes******")
     cal_accuracy(y_test, y_pred)
+    max_accuracy.append(accuracy_score(y_test, y_pred) * 100)
 
 
 if __name__ == "__main__":
@@ -139,3 +165,4 @@ if __name__ == "__main__":
     classifications = [decision_tree, knn, naive_bayes, random_forests, adaboost]
     for classification in classifications:
         classification(x_train, x_test, y_train, y_test)
+    plot_max()
