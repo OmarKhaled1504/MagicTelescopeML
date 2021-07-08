@@ -83,6 +83,7 @@ def knn(x_train, x_test, y_train, y_test):
         cal_accuracy(y_test, y_pred)
 
     plt.plot(k_range, scores_list)
+    plt.title('K-NN with K tuned')
     plt.xlabel("Value of K")
     plt.ylabel("Testing Accuracy")
     plt.show()
@@ -108,6 +109,7 @@ def random_forests(x_train, x_test, y_train, y_test):
         print("Accuracy Report for n=", n)
         cal_accuracy(y_test, y_pred)
     plt.plot(n_range, scores_list)
+    plt.title('Random Forest with n_estimators tuned')
     plt.xlabel("Value of N")
     plt.ylabel("Testing Accuracy")
     plt.show()
@@ -125,6 +127,7 @@ def adaboost(x_train, x_test, y_train, y_test):
         print("Accuracy Report for n=", n)
         cal_accuracy(y_test, y_pred)
     plt.plot(n_range, scores_list)
+    plt.title('Adaboost with n_estimators tuned')
     plt.xlabel("Value of N")
     plt.ylabel("Testing Accuracy")
     plt.show()
@@ -136,8 +139,6 @@ if __name__ == "__main__":
         sep=',', header=None)
     instances = balance(instances)
     x, y, x_train, x_test, y_train, y_test = split(instances)
-    decision_tree(x_train, x_test, y_train, y_test)
-    knn(x_train, x_test, y_train, y_test)
-    naive_bayes(x_train, x_test, y_train, y_test)
-    random_forests(x_train, x_test, y_train, y_test)
-    adaboost(x_train, x_test, y_train, y_test)
+    classifications = [decision_tree, knn, naive_bayes, random_forests, adaboost]
+    for classfication in classifications:
+        classfication(x_train, x_test, y_train, y_test)
