@@ -46,20 +46,13 @@ def cal_accuracy(y_test, y_pred):
           classification_report(y_test, y_pred))
 
 
-def prediction(X_test, clf_object):
-    y_pred = clf_object.predict(X_test)
-    print("Predicted values:")
-    print(y_pred)
-    return y_pred
-
-
 def decision_tree(x_train, x_test, y_train, y_test):
     clf_gini = training_with_gini(x_train, y_train)
     clf_entropy = training_with_entropy(x_train, y_train)
-    y_pred_gini = prediction(x_test, clf_gini)
+    y_pred_gini = clf_gini.predict(x_test)
     print("******Decision Tree: Gini******")
     cal_accuracy(y_test, y_pred_gini)
-    y_pred_entropy = prediction(x_test, clf_entropy)
+    y_pred_entropy = clf_entropy.predict(x_test)
     print("******Decision Tree: Entropy******")
     cal_accuracy(y_test, y_pred_entropy)
 
