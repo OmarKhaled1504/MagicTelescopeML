@@ -52,7 +52,7 @@ def plot_max():
     data = {'DT: Gini': max_accuracy[0], 'DT: Entropy': max_accuracy[1], 'KNN': max_accuracy[2],
             'NB': max_accuracy[3], 'RF': max_accuracy[4], "AdaBoost": max_accuracy[5]}
     plt.bar(list(data.keys()), list(data.values()), color='purple', width=0.4)
-    plt.xlabel("Algorithm Used")
+    plt.xlabel("Algorithms Used")
     plt.ylabel("Accuracy Score")
     plt.title("Max Accuracy for each Algorithm Comparison")
     plt.show()
