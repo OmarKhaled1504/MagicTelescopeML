@@ -37,6 +37,12 @@ def split(instances):
     return x_train, x_test, y_train, y_test
 
 
+def classify(x_train, x_test, y_train, y_test):
+    classifications = [decision_tree, knn, naive_bayes, random_forests, adaboost]
+    for classification in classifications:
+        classification(x_train, x_test, y_train, y_test)
+
+
 def cal_accuracy(y_test, y_pred):
     print("Confusion Matrix: \n",
           confusion_matrix(y_test, y_pred))
@@ -165,7 +171,5 @@ if __name__ == "__main__":
     instances = read()
     instances = balance(instances)
     x_train, x_test, y_train, y_test = split(instances)
-    classifications = [decision_tree, knn, naive_bayes, random_forests, adaboost]
-    for classification in classifications:
-        classification(x_train, x_test, y_train, y_test)
+    classify(x_train, x_test, y_train, y_test)
     plot_max()
